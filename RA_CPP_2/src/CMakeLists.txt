@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 project(RA_CPP_2)
 
- include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
- conan_basic_setup()
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
 add_executable(array array.cpp ByteArray.cpp)
 target_compile_features(array PRIVATE cxx_std_17)

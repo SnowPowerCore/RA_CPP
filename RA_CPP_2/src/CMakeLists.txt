@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.12)
 
 project(RA_CPP_2)
 
-find_package(Boost 1.67.0 REQUIRED system)
+ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+ conan_basic_setup()
 
 add_executable(array array.cpp ByteArray.cpp)
 target_compile_features(array PRIVATE cxx_std_17)
@@ -15,4 +16,5 @@ target_compile_features(polymorphism PRIVATE cxx_std_17)
 
 add_executable(types types.cpp)
 target_compile_features(types PRIVATE cxx_std_17)
-target_link_libraries(types PRIVATE Boost::system)
+target_link_libraries(types PRIVATE ${CONAN_LIBS})
+

@@ -50,7 +50,7 @@ namespace
     {
         constexpr size_t size = 5;
 
-        char* array = new char[size];
+        char* array = new char[500];
         std::memcpy(array, "A lot of characters and random bytes", 500);
 
         array[0] = 'H';

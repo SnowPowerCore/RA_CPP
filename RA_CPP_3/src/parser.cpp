@@ -4,7 +4,7 @@
 #include <regex>
 #include <set>
 
-int main(int argc, char **argv)
+int main(int argc, char** argv)
 {
     if (argc < 5) {
         std::cerr << "Usage: " << argv[0] << " -i <input_file> -o <output_file>" << "\n";

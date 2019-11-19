@@ -1,3 +1,4 @@
+#include <array>
 #include <cassert>
 #include <cctype>
 #include <cstring>
@@ -28,16 +29,21 @@ struct CaseInsensitiveTraits final : std::char_traits<char> {
 };
 
 template<typename T>
-struct Allocator {
+struct Allocator final {
     using value_type = T;
 
-    char* allocate(size_t size)
+    Allocator() = default;
+
+    template<typename U>
+    Allocator(const Allocator<U>&) {}
+
+    T* allocate(size_t size)
     {
         std::cout << "Allocated " << sizeof(T) * size << " bytes" << "\n";
         return new T[size];
     }
 
-    void deallocate(T* ptr, size_t size)
+    void deallocate(T* ptr, size_t size) noexcept
     {
         std::cout << "Deallocated " << sizeof(T) * size << " bytes" << "\n";
         delete[] ptr;

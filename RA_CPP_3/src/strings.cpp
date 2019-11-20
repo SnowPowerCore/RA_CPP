@@ -29,7 +29,7 @@ struct CaseInsensitiveTraits final : std::char_traits<char> {
 };
 
 template<typename T>
-struct Allocator final {
+struct Allocator {
     using value_type = T;
 
     Allocator() = default;

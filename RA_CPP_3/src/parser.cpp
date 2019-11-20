@@ -4,6 +4,11 @@
 #include <regex>
 #include <set>
 
+#include <boost/iostreams/filtering_streambuf.hpp>
+#include <boost/iostreams/filter/gzip.hpp>
+
+using namespace boost::iostreams;
+
 int main(int argc, char** argv)
 {
     if (argc < 5) {
@@ -14,7 +19,14 @@ int main(int argc, char** argv)
     const std::regex re(R"(https?:\/\/?([\w\.-]+)(\/[\w\.\,\/\+]*)*\/?)");
     std::set<std::string> domains;
     std::string line;
-    std::ifstream in(argv[2]);
+
+    std::ifstream file(argv[2], std::ios_base::in | std::ios_base::binary);
+
+    filtering_streambuf<input> streambuf;
+    streambuf.push(gzip_decompressor());
+    streambuf.push(file);
+
+    std::istream in(&streambuf);
 
     while (std::getline(in, line)) {
         for (auto it = std::sregex_iterator(line.begin(), line.end(), re); it != std::sregex_iterator(); ++it) {
@@ -23,7 +35,7 @@ int main(int argc, char** argv)
         }
     }
 
-    in.close();
+    file.close();
 
     std::ofstream out(argv[4]);
 

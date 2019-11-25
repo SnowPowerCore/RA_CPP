@@ -20,6 +20,10 @@ target_compile_features(Lambdas PRIVATE cxx_std_17)
 add_executable(List list.cpp)
 target_compile_features(List PRIVATE cxx_std_17)
 
+add_executable(Parser parser.cpp)
+target_compile_features(Parser PRIVATE cxx_std_17)
+target_link_libraries(Parser PRIVATE ${CONAN_LIBS})
+
 add_executable(Ranges ranges.cpp)
 target_compile_features(Ranges PRIVATE cxx_std_17)
 target_link_libraries(Ranges PRIVATE ${CONAN_LIBS})

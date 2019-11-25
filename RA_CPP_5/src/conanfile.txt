@@ -1,5 +1,6 @@
 [requires]
-range-v3/0.9.1@ericniebler/stable 
+boost/1.71.0
+range-v3/0.9.1@ericniebler/stable
 
 [generators]
 cmake

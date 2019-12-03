@@ -27,12 +27,15 @@ int main()
         std::sort(std::execution::par, vector.begin(), vector.end());
     }
 
+// NOTE: This policy is from C++20, but GCC already support it.
+#ifdef __GNUC__
     {
         std::generate(vector.begin(), vector.end(), generator);
 
         TimeTracker tt("unseq");
         std::sort(std::execution::unseq, vector.begin(), vector.end());
     }
+#endif
 
     {
         std::generate(vector.begin(), vector.end(), generator);

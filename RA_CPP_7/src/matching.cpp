@@ -24,7 +24,7 @@ int main()
         TimeTracker tt("Matching");
 
         #pragma omp parallel for
-        for (size_t i = 0; i < images.size(); ++i) {
+        for (int i = 0; i < images.size(); ++i) {
             images[i] = cv::imread(files[i], cv::IMREAD_ANYCOLOR);
 
             detector->detect(images[i], keypoints[i]);

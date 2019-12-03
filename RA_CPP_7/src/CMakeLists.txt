@@ -5,7 +5,7 @@ project(RA_CPP_7)
 find_package(OpenMP REQUIRED)
 find_package(Threads REQUIRED)
 
-option(USE_CONAN "Use conan" OFF)
+option(USE_CONAN "Use conan" ON)
 
 if (USE_CONAN)
     include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -20,7 +20,10 @@ target_link_libraries(Deadlock PRIVATE Threads::Threads)
 
 add_executable(MapReduce map_reduce.cpp)
 target_compile_features(MapReduce PRIVATE cxx_std_17)
-target_link_libraries(MapReduce PRIVATE tbb)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_link_libraries(MapReduce PRIVATE tbb)
+endif()
 
 add_executable(Matching matching.cpp)
 target_compile_features(Matching PRIVATE cxx_std_17)
@@ -41,7 +44,10 @@ endif()
 
 add_executable(ParallelAlgorithm parallel_algorithm.cpp)
 target_compile_features(ParallelAlgorithm PRIVATE cxx_std_17)
-target_link_libraries(ParallelAlgorithm PRIVATE tbb)
+
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    target_link_libraries(ParallelAlgorithm PRIVATE tbb)
+endif()
 
 add_executable(Philosofers philosofers.cpp)
 target_compile_features(Philosofers PRIVATE cxx_std_17)

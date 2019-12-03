@@ -1,6 +1,8 @@
 #include <algorithm>
 #include <iostream>
+#include <functional>
 #include <mutex>
+#include <string>
 #include <thread>
 #include <vector>
 

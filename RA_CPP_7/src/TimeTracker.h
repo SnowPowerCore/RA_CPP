@@ -8,7 +8,7 @@ class TimeTracker final
 public:
     explicit TimeTracker(std::string_view label)
         : label_(label)
-          , begin_(steady_clock::now())
+        , begin_(steady_clock::now())
     {}
 
     ~TimeTracker()

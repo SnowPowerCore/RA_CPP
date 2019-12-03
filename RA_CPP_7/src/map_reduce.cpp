@@ -21,7 +21,7 @@ int main()
 
     TimeTracker tt("transform_reduce");
 
-    std::cout << std::transform_reduce(std::execution::par, log.cbegin(), log.cend(), 0,
+    std::cout << std::transform_reduce(std::execution::par_unseq, log.cbegin(), log.cend(), 0,
         [](int lhs, int rhs) {
             return std::max(lhs, rhs);
         },

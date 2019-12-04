@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <atomic>
 #include <functional>
 #include <iostream>
@@ -15,16 +16,16 @@ using namespace::std::chrono_literals;
 class SpinLock final
 {
 public:
-    constexpr SpinLock() noexcept
+    SpinLock() noexcept
         : flag_ ATOMIC_FLAG_INIT
     {}
 
-    constexpr void lock() noexcept
+    void lock() noexcept
     {
         while(flag_.test_and_set(std::memory_order_acquire));
     }
 
-    constexpr void unlock() noexcept
+    void unlock() noexcept
     {
         flag_.clear(std::memory_order_release);
     }

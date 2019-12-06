@@ -7,6 +7,10 @@
 
 using namespace std::chrono_literals;
 
+/**
+ * @class DebugMutex
+ * @brief Отладочная обёртка над мьютеском. Выводит в stdout информации о блокировках.
+ */
 template<typename Mutex>
 class DebugMutex final : private Mutex
 {
@@ -31,6 +35,12 @@ private:
     std::string label_;
 };
 
+/**
+ * @class BTree
+ * @brief Бинарное дерево поиска.
+ * @warning Балансировки нет. Не используйте в реальном коде.
+ * @tparam Сompare функция сравнения ключей
+ */
 template<typename T, typename Compare = std::less<T>>
 struct BTree final
 {
@@ -44,6 +54,7 @@ struct BTree final
 
     void insert(T&& value)
     {
+        // NOTE: Защищаем вставку в дерево в мьютексом.
         static DebugMutex<std::mutex> mutex("InsertMutex");
         std::lock_guard lock(mutex);
 
@@ -52,6 +63,7 @@ struct BTree final
         auto& tree = Compare()(value, this->value) ? left : right;
 
         if (tree) {
+           // NOTE: Из-за рекурсии возникнет взаимная блокировка.
             tree->insert(std::forward<T>(value));
         } else {
             tree = std::make_unique<BTree>(std::forward<T>(value));
@@ -87,6 +99,7 @@ private:
     std::string password_;
 };
 
+// NOTE: Свяжем с каждым экземпляром класса User пару мьютексов (по одному на каждое из полей).
 struct ThreadSafeUser : public User
 {
     ThreadSafeUser()
@@ -132,6 +145,7 @@ int main()
         traverse(&tree, [](auto* tree) { std::cout << tree->value << "\n"; });
     }
 
+    // NOTE: Захватываем мьютексы в разном порядке и получаем взаимную блокировку.
     {
         ThreadSafeUser user;
 

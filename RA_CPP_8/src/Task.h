@@ -17,7 +17,7 @@ public:
         }
 
         auto initial_suspend() {
-            return std::experimental::suspend_always();
+            return std::experimental::suspend_never();
         }
 
         auto final_suspend() {
@@ -87,7 +87,7 @@ public:
         }
 
         auto initial_suspend() {
-            return std::experimental::suspend_always();
+            return std::experimental::suspend_never();
         }
 
         auto final_suspend() {

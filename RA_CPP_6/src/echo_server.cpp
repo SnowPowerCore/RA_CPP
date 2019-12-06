@@ -23,6 +23,10 @@ namespace
     }
 }
 
+/**
+ * @struct StopServerExeption
+ * @brief Пользовательское исключение для остановки сервера.
+ */
 struct StopServerExeption final : std::exception {};
 
 class Server final
@@ -30,10 +34,14 @@ class Server final
 public:
     Server() = default;
 
+    /**
+     * @brief Выполняет настройку сервера по указанному файлу конфигурации.
+     */
     void configure(const fs::path& filename)
     {
         using namespace boost::property_tree;
 
+        // NOTE: Парсим JSON-файл настроек с помощью библиотеки boost.property_tree.
         ptree tree;
         read_json(filename.string(), tree);
 
@@ -43,18 +51,24 @@ public:
         );
     }
 
+    /**
+     * @brief Запускает сервер.
+     * @warning Корректный выход из функции возможем лишь при выбросе исключения.
+     */
     [[noreturn]] void start()
     {
         std::cout << "Service started" << std::endl;
 
         ip::tcp::iostream stream;
         ip::tcp::acceptor acceptor(service_, endpoint_);
+
+        // NOTE: Принимаем входящее соедение и свзываем его с потоком.
         acceptor.accept(*stream.rdbuf());
 
         while (true) {
             transform(stream, stream, [](std::string_view line) {
                 if (line == "SERVER_STOP") {
-                    throw StopServerExeption();
+                    throw StopServerExeption(); // NOTE: Выходим из функции, выбросив исключение остановки сервера.
                 }
 
                 return line;
@@ -81,8 +95,10 @@ int main()
         server.configure("EchoServer.conf");
         server.start();
     } catch (const StopServerExeption&) {
+        // NOTE: Корректно останавливаем сервер и завершаем программу.
         server.stop();
     } catch (const std::exception& exception) {
+        // NOTE: Все остальные исключения считаем ошибками. Выводим информацию о них и корректно завершаем программу.
         std::cerr << "Error occurred: " << exception.what() << "\n";
     }
 

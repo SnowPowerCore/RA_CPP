@@ -1,5 +1,8 @@
 [requires]
 opencv/4.1.1@conan/stable
 
+[options]
+opencv:openexr=False
+
 [generators]
 cmake

@@ -95,13 +95,14 @@ namespace Optionals
 
     void printCity(const User& user)
     {
-        std::cout << mbind(user.person, [](const Person& person){
-            return mbind(person.location, [](const Location& location) {
-                return mbind(location.city, [](const City& city) {
-                    return city.name;
-                }).value_or("No city");
-            }).value_or("No location");
-        }).value_or("No person") << "\n";
+        std::cout
+            << mbind(user.person, [](const Person& person){
+                return mbind(person.location, [](const Location& location) {
+                    return mbind(location.city, [](const City& city) {
+                        return city.name;
+                    }).value_or("No city");
+                }).value_or("No location");
+            }).value_or("No person") << "\n";
     }
 }
 

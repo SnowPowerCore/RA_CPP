@@ -21,7 +21,7 @@ target_link_libraries(Deadlock PRIVATE Threads::Threads)
 add_executable(MapReduce map_reduce.cpp)
 target_compile_features(MapReduce PRIVATE cxx_std_17)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_link_libraries(MapReduce PRIVATE tbb)
 endif()
 
@@ -45,7 +45,7 @@ endif()
 add_executable(ParallelAlgorithm parallel_algorithm.cpp)
 target_compile_features(ParallelAlgorithm PRIVATE cxx_std_17)
 
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_link_libraries(ParallelAlgorithm PRIVATE tbb)
 endif()
 

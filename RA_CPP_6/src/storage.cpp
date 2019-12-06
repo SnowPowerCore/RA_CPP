@@ -6,20 +6,32 @@
 
 using namespace std::literals;
 
+/**
+ * @class Storage
+ * @brief Хранилище типа "ключ-значение".
+ */
 class Storage final
 {
 public:
+    /**
+     * @brief Возвращает значение из хранилища по указанному ключу.
+     * @tparam T ожидаемый тип значения
+     * @return значение, если указнный ключ найден и тип значения совпал с ожидаемым, в противном случае - std::nullopt
+     */
     template<typename T>
     std::optional<T> getValue(const std::string& key) const
     {
         const auto it = storage_.find(key);
         const std::any value = (it == storage_.cend()) ? std::any() : it->second;
 
-        return (value.has_value() && value.type() == typeid(T))
+        return (value.has_value() && value.type() == typeid(T)) // NOTE: Проверяем наличие и тип значения.
             ? std::make_optional(std::any_cast<T>(value))
             : std::nullopt;
     }
 
+    /**
+     * @brief Связывает в хранилище указанные ключ и значение.
+     */
     template<typename T>
     void setValue(std::string_view key, T&& value)
     {

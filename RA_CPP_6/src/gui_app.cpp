@@ -9,5 +9,6 @@ int main(int argc, char** argv)
     MainWindow window;
     window.show();
 
+    // NOTE: Запускаем цикл обработки событий приложения.
     return app.exec();
 }

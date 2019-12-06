@@ -19,6 +19,10 @@ struct Nothing
     }
 };
 
+/**
+ * @class RangeStream
+ * @brief Stream-подобная обёртка над парой итераторов ввода (последовательностью).
+ */
 template<typename InputIterator, REQUIRES(std::is_same_v<std::string, typename std::iterator_traits<InputIterator>::value_type>)>
 class RangeStream final
 {
@@ -28,11 +32,17 @@ public:
         , end_(std::move(end))
     {}
 
+    /**
+     * @brief Показывает, достигнут ли конец потока (последовательности).
+     */
     bool eof() const
     {
         return (begin_ == end_);
     }
 
+    /**
+     * @brief Оператор чтения строк из потока.
+     */
     RangeStream& operator>>(std::string& line)
     {
         line = *begin_++;
@@ -45,6 +55,7 @@ private:
 };
 
 // WARNING: Этот "грязный хак" исключительно для примера. Не повторяйте в домашних условиях!
+// std::getline использовать хочется, а наследовать от std::istream - нет.
 namespace std
 {
     template<typename InputIterator>
@@ -90,6 +101,7 @@ int main(int argc, char** argv)
 
     std::istream in(&streambuf);
 
+    // NOTE: Применяем функцию преобразования текстовых потоков ("transform()") для парсинга потока.
     transform(std::ofstream("/dev/null"), in, [&re, &domains](const std::string& line) {
         for (auto it = std::sregex_iterator(line.begin(), line.end(), re); it != std::sregex_iterator(); ++it) {
             const std::smatch match = *it;
@@ -101,6 +113,7 @@ int main(int argc, char** argv)
 
     file.close();
 
+    // NOTE: И снова применяем функцию "transform()" вывода результатов из коллекции в файл.
     transform(std::ofstream(argv[4]), RangeStream(domains.cbegin(), domains.cend()));
 
     return 0;

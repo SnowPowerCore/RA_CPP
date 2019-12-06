@@ -7,6 +7,9 @@
 
 namespace
 {
+    /**
+     * @brief Разбивает строку на набор подстрок по указанному разделителю.
+     */
     std::vector<std::string> split(const std::string& string, char delimiter)
     {
         std::vector<std::string> result;
@@ -21,16 +24,26 @@ namespace
     }
 }
 
-struct Nothing {
+/**
+ * @struct Nothing
+ * @brief Преобразование по умолчнию (ничего не делает).
+ */
+struct Nothing final
+{
     constexpr std::string_view operator()(std::string_view line) const noexcept
     {
         return line;
     }
 };
 
-struct CsvReader {
+/**
+ * @struct CsvReader
+ * @brief Функциональный объект для чтения CSV-файлов.
+ */
+struct CsvReader final
+{
     char delimiter;
-    mutable std::vector<std::vector<std::string>> data;
+    mutable std::vector<std::vector<std::string>> data; // NOTE: Здесь накапливаем считанную таблицу.
 
     explicit CsvReader(char delimiter = ',')
         : delimiter(delimiter)
@@ -61,12 +74,12 @@ int main()
     sstream << "line_2" << "\n";
     sstream << "line_3" << "\n";
 
-    // запись текстового файла
+    // NOTE: запись текстового файла
     transform(std::ofstream("output.txt"), sstream);
 
     CsvReader reader;
 
-    // парсинг CSV-файла
+    // NOTE: Парсинг CSV-файла
     transform(std::ofstream("/dev/null"), std::ifstream("../src/input.csv"), reader);
 
     for (const std::vector<std::string>& row : reader.data) {
@@ -80,7 +93,7 @@ int main()
     boost::asio::ip::tcp::iostream socket_stream;
     socket_stream.connect("127.0.0.1", "3333");
 
-    // сетевой обмен с преобразованием в UPPER_CASE
+    // NOTE: Cетевой обмен с преобразованием в UPPER_CASE.
     transform(socket_stream, socket_stream, [](std::string line) {
         std::transform(line.begin(), line.end(), line.begin(), ::toupper);
         return line;

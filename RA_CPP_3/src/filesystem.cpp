@@ -4,7 +4,8 @@
 
 namespace fs = std::filesystem;
 
-struct FileInfo final {
+struct FileInfo final
+{
     bool isDirectory;
     std::string name;
     uint64_t size;
@@ -20,6 +21,7 @@ struct FileInfo final {
 
 namespace
 {
+    // NOTE: Оператор вывода в поток прав на файл в стиле утилиты "ls".
     std::ostream& operator<<(std::ostream& out, fs::perms p)
     {
         return out << ((p & fs::perms::owner_read) != fs::perms::none ? "r" : "-")
@@ -58,7 +60,8 @@ namespace
     }
 }
 
-struct TreePrinter {
+struct TreePrinter final
+{
     uint8_t depth = 0;
 
     void print(const fs::path& path)
@@ -79,11 +82,17 @@ struct TreePrinter {
 
 int main()
 {
-     for (const fs::path& path : fs::directory_iterator(fs::current_path())) {
-         std::cout << FileInfo(path);
-     }
+    // NOTE: Выводим в stdout список файлов в стиле утилиты "ls".
+    {
+        for (const fs::path& path : fs::directory_iterator(fs::current_path())) {
+            std::cout << FileInfo(path);
+        }
+    }
 
-     TreePrinter().print(fs::current_path());
+    // NOTE: Выводим в stdout дерево файлов в стиле утилиты "tree".
+    {
+        TreePrinter().print(fs::current_path());
+    }
 
     return 0;
 }

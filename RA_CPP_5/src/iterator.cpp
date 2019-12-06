@@ -3,6 +3,10 @@
 #include <iterator>
 #include <string>
 
+/**
+ * @struct ReadLineIterator
+ * @brief Итератор чтения строк из потока ввода.
+ */
 struct ReadLineIterator
 {
     std::istream* stream;
@@ -14,10 +18,12 @@ struct ReadLineIterator
 
     ReadLineIterator& operator++()
     {
+        // NOTE: Каждый итерация - чтение следующей строки.
         if (stream && !std::getline(*stream, line)) {
             stream = nullptr;
         }
 
+        // NOTE: Обратите внимание! Возвращаем тот же объект.
         return *this;
     }
 
@@ -26,12 +32,15 @@ struct ReadLineIterator
         return line;
     }
 
+    // WARNING: Считаем, для наглядности, что все строки в потоке уникальны. Не используйте итереатор в реально коде!
     bool operator!=(const ReadLineIterator& other) const
     {
         return (stream != other.stream) || (line != other.line);
     }
 };
 
+// NOTE: Определяем свойства итератора.
+// Нам важны лишь категория и тип элементов последовательности.
 namespace std
 {
     template<>
@@ -42,6 +51,11 @@ namespace std
     };
 }
 
+/**
+ * @class ReadLines
+ * @brief Последовательность строк в потоке вывода.
+ * @note Класс нужен лишь для лакончиной записи цикла for.
+ */
 class ReadLines
 {
 public:

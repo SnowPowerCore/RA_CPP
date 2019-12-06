@@ -4,9 +4,18 @@
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
+// NOTE: Статический полиморфизм, основанный на Σ-типе.
+// Сравните с реализациями, из 2-го и 4-го занятий.
+
 namespace TypeTraits
 {
-    template<typename T, typename Variant>
+    /**
+     * @struct ContainsType
+     * @brief Свойство типа, показывающее, сожержится ли указаныый тип частью суммы.
+     * @tparam T исследуемый тип
+     * @tparam SigmaType Σ-тип (тип-сумма)
+     */
+    template<typename T, typename SigmaType>
     struct ContainsType : std::false_type {};
 
     template<typename T, typename... Ts>
@@ -37,10 +46,12 @@ struct Human final
     }
 };
 
+// NOTE: Используем std::variant для определения Σ-типа "Животное".
 using Animal = std::variant<Cat, Dog>;
 
 struct Voice final
 {
+    // NOTE: Отображаем применение посетителя на вызовы методов полиморфных объектов.
     template<typename T, REQUIRES(TypeTraits::ContainsType<T, Animal>::value)>
     void operator()(const T& animal) const
     {
@@ -50,13 +61,15 @@ struct Voice final
 
 int main()
 {
+    // NOTE: Общий тип позволяет использовать контейнер элементов.
     const std::vector<Animal> animals = { Cat(), Dog() };
 
     for (const Animal& animal : animals) {
         std::visit(Voice(), animal);
     }
 
-//     std::visit(Voice(), std::variant<Human>());
+    // NOTE: Человек - не животное! Такой вызов не пройдёт.
+    // std::visit(Voice(), std::variant<Human>());
 
     return 0;
 }

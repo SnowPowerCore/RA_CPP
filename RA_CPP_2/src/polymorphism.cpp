@@ -1,19 +1,24 @@
 #include <iostream>
 #include <vector>
 
-struct Animal {
+// NOTE: Динамический полиморфизм, основанный на виртуальных вызовах.
+
+struct Animal
+{
     virtual ~Animal() = default;
     virtual void voice() = 0;
 };
 
-struct Cat final : Animal {
+struct Cat final : Animal
+{
     void voice() override
     {
         std::cout << "Meow!" << "\n";
     }
 };
 
-struct Dog final : Animal {
+struct Dog final : Animal
+{
     void voice() override
     {
         std::cout << "Woof!" << "\n";

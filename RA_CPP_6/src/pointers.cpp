@@ -6,6 +6,9 @@
 
 namespace
 {
+    /**
+     * @brief Выполнят прямой обход дерева с применением указанной функции.
+     */
     template<typename Tree, typename Callable, REQUIRES(std::is_invocable_v<Callable, Tree>)>
     void traverse(Tree tree, Callable&& visit)
     {
@@ -18,9 +21,10 @@ namespace
 }
 
 template<typename T>
-class Tree : public std::enable_shared_from_this<Tree<T>>
+class Tree : public std::enable_shared_from_this<Tree<T>> // NOTE: Подмешиваем способность разделять владение.
 {
 public:
+    // NOTE: Следствие такой способности - запрет на прямое создание объектов на стеке.
     static std::shared_ptr<Tree> create(T value)
     {
         return std::shared_ptr<Tree>(new Tree(std::move(value)));
@@ -36,19 +40,25 @@ public:
 
     void insert(std::shared_ptr<Tree> tree)
     {
+        // NOTE: Устанавливаем слабую ссылку на самого себе вставляемому дереву.
         tree->parent_ = this->weak_from_this();
+
         children_.push_back(std::move(tree));
     }
 
     template<typename... Ts, REQUIRES((std::is_same_v<T, Ts> && ...))>
     Tree& insert(Ts... args)
     {
+        // NOTE: Вставляем сразу несколько деревьев на один уровень.
         (insert(Tree::create(std::move(args))), ...);
+
         return *children_.back();
     }
 
     std::shared_ptr<Tree> removeChild(size_t index)
     {
+        // NOTE: Удаляем поддерево по указанному индеску, если таковое имеется.
+        // Обратите внимание, поддерево останется в памяти если им кто-то завладеет.
         std::shared_ptr<Tree> tree;
 
         if (index < children_.size()) {
@@ -66,14 +76,16 @@ public:
         return value_;
     }
 
+    // NOTE: Доступ к родителю по std::shared_ptr (сильная ссылка, никто не удалит внезапно).
     std::shared_ptr<Tree> parent() const
     {
         return parent_.lock();
     }
 
+    // NOTE: Доступ к поддереву так же выполняем через std::shared_ptr.
     std::shared_ptr<Tree> child(size_t index) const
     {
-        return children_[index];
+        return (index < children_.size()) ? children_[index] : std::shared_ptr<Tree>();
     }
 
     size_t childCount() const
@@ -107,7 +119,7 @@ private:
 
 private:
     T value_;
-    std::weak_ptr<Tree> parent_;
+    std::weak_ptr<Tree> parent_; // NOTE: Слабая сслыка на родителя решает проблему перекрёстных ссылок.
     std::vector<std::shared_ptr<Tree>> children_;
 };
 

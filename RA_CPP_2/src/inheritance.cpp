@@ -4,12 +4,12 @@
 #include <string>
 #include <unordered_map>
 
-class ByteArray
+class ByteArray final
 {
 public:
     explicit ByteArray(size_t size)
         : size_(size)
-        , data_(new std::byte[size])
+        , data_(new std::byte[size_])
     {}
 
     ~ByteArray()
@@ -22,7 +22,9 @@ private:
     std::byte* data_;
 };
 
-struct Allocator {
+// NOTE: Инкапсулируем выделение/освобождение памяти в аллокаторе.
+struct Allocator
+{
     [[nodiscard]] std::byte* allocate(size_t size)
     {
         return new std::byte[size];
@@ -34,7 +36,7 @@ struct Allocator {
     }
 };
 
-class ByteArray2
+class ByteArray2 final
 {
 public:
     explicit ByteArray2(size_t size)
@@ -48,12 +50,12 @@ public:
     }
 
 private:
-    Allocator allocator_;
+    Allocator allocator_; // NOTE: Композиция посредством добавления поля для аллокатора.
     size_t size_;
     std::byte* data_;
 };
 
-class ByteArray3 : private Allocator
+class ByteArray3 : private Allocator // NOTE: Композиция посредством приватного наследования аллокатора.
 {
 public:
     explicit ByteArray3(size_t size)
@@ -71,7 +73,8 @@ private:
     std::byte* data_;
 };
 
-struct IStorage {
+struct IStorage
+{
     virtual ~IStorage() = default;
     virtual std::string get(int key) const = 0;
     virtual void set(int key, const std::string& value) = 0;
@@ -95,9 +98,12 @@ private:
     std::unordered_map<int, std::string> map_;
 };
 
+// NOTE: Реализуем потоко-безопасное хранилище посредством приватного и виртуального наследования.
+// WARNING: Только для демострации. В реальном коде так делать нельзя.
 class ThreadSafeStorage : virtual public IStorage, private MemoryStorage
 {
 public:
+    // NOTE: Предполагая, что метод "get()" не требует защиты мьютексом, просто "пробрасываем" от базового класса.
     using MemoryStorage::get;
 
     void set(int key, const std::string& value) override
@@ -111,15 +117,19 @@ public:
 
 int main()
 {
-    std::cout << sizeof(ByteArray) << "\n";
-    std::cout << sizeof(Allocator) << "\n\n";
+    {
+        std::cout << sizeof(ByteArray) << "\n";
+        std::cout << sizeof(Allocator) << "\n\n";
 
-    std::cout << sizeof(ByteArray2) << "\n";
-    std::cout << sizeof(ByteArray3) << "\n\n";
+        std::cout << sizeof(ByteArray2) << "\n";
+        std::cout << sizeof(ByteArray3) << "\n\n";
+    }
 
-//    ThreadSafeStorage storage;
-//    storage.set(42, "text");
-//    std::cout << storage.get(42) << "\n";
+    {
+        ThreadSafeStorage storage;
+        storage.set(42, "text");
+        std::cout << storage.get(42) << "\n";
+    }
 
     return 0;
 }

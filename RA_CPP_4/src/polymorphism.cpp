@@ -2,6 +2,8 @@
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
+// NOTE: Статический полиморфизм, основанный на CRTP.
+
 template<typename T>
 struct Animal
 {
@@ -29,9 +31,11 @@ struct Dog final : Animal<Dog>
 
 namespace
 {
+    // NOTE: Определяем множество полиморфтных типов (Animals).
     template<typename T>
     constexpr bool IsAnimal = std::is_base_of_v<Animal<T>, T>;
 
+    // NOTE: Обрабатываем "коллекцию" полиморфных объектов как пакет параметров шалбонной функции.
     template<typename... Ts, REQUIRES((IsAnimal<Ts> && ...))>
     void voiceAll(Ts&& ... animal)
     {
@@ -42,6 +46,5 @@ namespace
 int main()
 {
     voiceAll(Cat(), Dog());
-
     return 0;
 }

@@ -31,6 +31,12 @@ namespace algorithm
         typename Containter,
         typename Predicate, REQUIRES(TypeTraits::IsPredicate<Predicate, typename Containter::value_type>::value)
     >
+    /**
+     * @brief Фильтрует контейнер по указанному условию.
+     * @param container исходный контейнер
+     * @param predicate предикат условия фильтрации
+     * @return новый контейнер, содержащий прошедшие фильтрацию элементы исходного
+     */
     Containter filter(const Containter& container, Predicate predicate)
     {
         Containter result;
@@ -49,6 +55,12 @@ namespace algorithm
         typename Transform, REQUIRES(std::is_invocable_v<Transform, typename Containter::value_type>),
         typename ResultType = std::vector<std::invoke_result_t<Transform&&, typename Containter::value_type>>
     >
+    /**
+     * @brief Применяет указанную функцию преобразования к элементам контейнера
+     * @param container исходный контейнер
+     * @param transform функция преобразования элемена контейнера
+     * @return новый контейнер, содержащий преобразованные элементы исходного
+     */
     ResultType transform(const Containter& container, Transform&& transform)
     {
         ResultType result;
@@ -61,7 +73,11 @@ namespace algorithm
     }
 }
 
-struct Number
+/**
+ * @struct Number
+ * @brief Обёртка над целыми числами для анализа копирований в алгоритмах.
+ */
+struct Number final
 {
     int value;
 
@@ -83,8 +99,10 @@ struct Number
 
 int main()
 {
-    const std::vector<Number> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
+    static const std::vector<Number> numbers = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 };
 
+    // NOTE: Применяем композицию функций "transform(filter(...))".
+    // Обратите внимание на лишнее копирование.
     auto container = algorithm::transform(
         algorithm::filter(numbers, [](int i) { return i % 2 == 0; }),
         [](int i) { return std::to_string(i); }
@@ -94,11 +112,13 @@ int main()
         std::cout << i << " ";
     }
 
+    // NOTE: Применяем заранее заготовленный алгоритм.
     algorithm::transform_if(numbers.begin(), numbers.end(), std::ostream_iterator<std::string>(std::cout, " "),
         [](int i) { return i % 2 == 0; },
         [](int i) { return std::to_string(i); }
     );
 
+    // NOTE: Применяем диапазоны (библиотека range-v3).
     auto range = numbers
         | ranges::views::filter([](int i) { return i % 2 == 0; })
         | ranges::views::transform([](int i) { return std::to_string(i); });

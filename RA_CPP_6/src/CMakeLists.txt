@@ -2,9 +2,11 @@ cmake_minimum_required(VERSION 3.12)
 
 project(RA_CPP_6)
 
+# NOTE: Добавляем опцию, позволяющую собрать проект без примера с Qt.
 option(WITH_QT_EXAMPLE "Enable the example of Qt application" ON)
 
 if (WITH_QT_EXAMPLE)
+    # NOTE: Включаем Qt-спечифичную автогенерацию кода. Подробности в документации Qt.
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
 

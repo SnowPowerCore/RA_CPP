@@ -14,6 +14,7 @@ target_compile_features(Sfinae PRIVATE cxx_std_17)
 add_executable(Polymorphism polymorphism.cpp)
 target_compile_features(Polymorphism PRIVATE cxx_std_17)
 
+# NOTE: Включаем концепты для GCC.
 if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
     add_executable(Concepts concepts.cpp)
     target_compile_features(Concepts PRIVATE cxx_std_20)

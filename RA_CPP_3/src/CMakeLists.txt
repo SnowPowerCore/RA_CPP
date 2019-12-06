@@ -5,6 +5,7 @@ project(RA_CPP_3)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
+# NOTE: Поиск системной библиотеки поддержки потоков.
 find_package(Threads)
 
 add_executable(Filesystem filesystem.cpp)
@@ -15,7 +16,7 @@ target_compile_features(Parser PRIVATE cxx_std_17)
 
 target_link_libraries(Parser
     PRIVATE
-        Threads::Threads
+        Threads::Threads # NOTE: Компонуем цель с системной библиотекой потоков.
         ${CONAN_LIBS}
 )
 

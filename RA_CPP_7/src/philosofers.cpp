@@ -6,6 +6,8 @@
 #include <thread>
 #include <vector>
 
+// NOTE: Решаем задачу обедающих философов.
+
 using namespace std::chrono_literals;
 
 class Philosofer final
@@ -18,6 +20,7 @@ public:
 
     void eat(std::vector<std::mutex>& forks) const
     {
+        // NOTE: Захватываем пару мьютексов (есть можно лишь двумя вилками).
         const std::scoped_lock lock(forks[forks_.first], forks[forks_.second]);
 
         printLine(name_ + " has started eating. ");
@@ -28,6 +31,7 @@ public:
 private:
     static void printLine(std::string_view line)
     {
+        // NOTE: Защищаем вывод сроки в stdout.
         const std::lock_guard lock(mutex_);
         std::cout << line << std::endl;
     }
@@ -56,10 +60,17 @@ namespace
 
 int main()
 {
+    // NOTE: Рассадим философов за стол.
     const std::vector philosofers = ::philosofers(5);
+
+    // NOTE: Вилок мало, раздаём по одной штуке каждому. Придётся делиться.
     std::vector<std::mutex> forks(philosofers.size());
+
     std::vector<std::thread> threads;
 
+    // NOTE: Философы приступили к приёму пищи.
+    // Обратите внимание, мьютексы обеспечат эффективную синхронизацию потоков.
+    // В каждый момент времени едят ровно столько человек, сколько это вообще возможно в текущих условиях.
     std::transform(philosofers.cbegin(), philosofers.cend(), std::back_inserter(threads),
         [&forks](const Philosofer& philosofer) {
             return std::thread([&philosofer, &forks]{
@@ -68,6 +79,7 @@ int main()
         }
     );
 
+    // NOTE: Ждём, пока все поедят.
     std::for_each(threads.begin(), threads.end(), std::mem_fn(&std::thread::join));
 
     return 0;

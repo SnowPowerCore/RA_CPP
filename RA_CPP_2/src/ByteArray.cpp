@@ -11,7 +11,9 @@ ByteArray::ByteArray(size_t size, std::byte byte)
     : size_(size)
     , data_(new std::byte[size_])
 {
+    // NOTE: Заполняем весь массив указанным байтом.
     std::fill(data_, data_ + size_, byte);
+
     std::cout << "Created " << this << "\n";
 }
 
@@ -19,7 +21,9 @@ ByteArray::ByteArray(const ByteArray& other)
     : size_(other.size_)
     , data_(new std::byte[size_])
 {
+    // NOTE: Копируем массив.
     std::memcpy(data_, other.data_, size_);
+
     std::this_thread::sleep_for(5s);
 
     std::cout << "Copied to " << this << "\n";

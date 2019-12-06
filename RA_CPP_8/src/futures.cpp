@@ -7,11 +7,17 @@
 
 using namespace std::chrono_literals;
 
+// NOTE: Демонстрация возможностей boost::future при работе вводом/выводом.
+
 struct Nothing
 {
     constexpr void operator()() const noexcept {}
 };
 
+/**
+ * @class Writer
+ * @brief Эмулятор долгой записи строк в поток вывода.
+ */
 struct Writer
 {
     std::ostream& stream;
@@ -20,12 +26,18 @@ struct Writer
         : stream(stream)
     {}
 
+    /**
+     * @brief Записывает строку в поток (синхронно и долго).
+     */
     void writeLine(std::string_view line)
     {
         std::this_thread::sleep_for(1s);
         stream << line << std::endl;
     }
 
+    /**
+     * @brief Асинхронно записывает строку в поток.
+     */
     template<typename Callback = Nothing>
     void writeLineAsync(std::string_view line, Callback&& callback = Callback())
     {
@@ -38,6 +50,8 @@ struct Writer
 
 namespace
 {
+    // NOTE: Синхронная последовтельная запись.
+    // Надёжно, но долго. Вынуждены простаивать из-за ввода/вывода.
     void synchronous()
     {
         Writer writer(std::cout);
@@ -50,6 +64,8 @@ namespace
         std::cout << "Other task" << "\n";
     }
 
+    // NOTE: Асихронная запись.
+    // Ненадёжно. Данные пишутся в произвольном поряке.
     void asynchronous()
     {
         Writer writer(std::cout);
@@ -63,6 +79,8 @@ namespace
         std::this_thread::sleep_for(10s);
     }
 
+    // NOTE: Асихронная запись с callback-ами.
+    // Надёжно и быстро, но не ясно когда запись завершится.
     void callbacks()
     {
         Writer writer(std::cout);
@@ -107,9 +125,9 @@ namespace
 
 int main()
 {
-//    synchronous();
-//    asynchronous();
-//    callbacks();
+    synchronous();
+    asynchronous();
+    callbacks();
     futures();
 
     return 0;

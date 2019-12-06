@@ -28,5 +28,10 @@ add_executable(Ranges ranges.cpp)
 target_compile_features(Ranges PRIVATE cxx_std_17)
 target_link_libraries(Ranges PRIVATE ${CONAN_LIBS})
 
+# NOTE: Разрешаем MSVC собрать пример с range-v3 (См. https://github.com/ericniebler/range-v3).
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    target_compile_options(Ranges PRIVATE "/experimental:preprocessor")
+endif()
+
 add_executable(StlUsage stl_usage.cpp)
 target_compile_features(StlUsage PRIVATE cxx_std_17)

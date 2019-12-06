@@ -1,5 +1,9 @@
 #include <iostream>
 
+// NOTE: Статический полиморфизм, основанный на концептах.
+// Сравните с реализацией, основанной на CRTP.
+
+// NOTE: Определяем концепт "Животное".
 template<typename T>
 concept bool Animal()
 {
@@ -46,7 +50,7 @@ struct Tree
 
 namespace
 {
-    template<Animal... Ts>
+    template<Animal... Ts> // NOTE: Функция применима только к объектам классов, удовлетворяющих концепту Animal.
     void voiceAll(Ts&& ... animal)
     {
         (animal.voice(), ...);

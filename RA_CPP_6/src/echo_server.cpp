@@ -68,7 +68,8 @@ public:
         while (true) {
             transform(stream, stream, [](std::string_view line) {
                 if (line == "SERVER_STOP") {
-                    throw StopServerExeption(); // NOTE: Выходим из функции, выбросив исключение остановки сервера.
+                    // NOTE: Выходим из функции, выбросив исключение остановки сервера.
+                    throw StopServerExeption();
                 }
 
                 return line;

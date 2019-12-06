@@ -4,12 +4,17 @@
 
 namespace
 {
+    /**
+     * @struct Node
+     * @brief Зависимая от размера элемента ячейка, в которой будем хранить его данные.
+     */
     template<typename T, bool IsLarge>
     struct Node;
 
     template<typename T>
     struct Node<T, true>
     {
+        // NOTE: Большие элементы держим где-то в произвольном месте на в куче, храним на них лишь указатели.
         using value_type = T*;
 
         T* value;
@@ -50,6 +55,7 @@ namespace
     template<typename T>
     struct Node<T, false>
     {
+        // NOTE: Маленькие элементы храним прямо в ячейке.
         using value_type = T;
 
         T value;
@@ -60,13 +66,23 @@ namespace
     };
 }
 
+/**
+ * @class List
+ * @brief Коллекция элементов с произвольным доступом с оптимизацией вставки/удаления больших объектов.
+ * @tparam T тип элементов контейнера
+ * @tparam Container низлежащий контейнер
+ */
 template<typename T, template<typename, typename> typename Container = std::vector>
 class List
 {
+    // NOTE: Определяем ячейку для хранения объектов с учётом их размера.
     using node_type = Node<T, (sizeof(T) > sizeof(T*))>;
+
+    // NOTE: В нижлежащем контейнере храним именно ячейки.
     using container_type = Container<node_type, std::allocator<node_type>>;
 
 public:
+    // NOTE: Определяем свойтва контейнера для совместимости с STL.
     using value_type = T;
     using size_type = typename container_type::size_type;
     using reference = T&;
@@ -77,12 +93,14 @@ public:
 
     List(std::initializer_list<T> ilist)
     {
+        // NOTE: Инициализация списком. Перемещаем элементы в низжлежащий контейнер.
         container_.resize(ilist.size());
         std::move(ilist.begin(), ilist.end(), container_.begin());
     }
 
     reference operator[](size_type pos)
     {
+        // NOTE: Маленькие элементы достаём сразу, большие - через указатель.
         if constexpr (std::is_same_v<value_type, typename node_type::value_type>) {
             return container_[pos].value;
         } else {
@@ -92,13 +110,11 @@ public:
 
     const_reference operator[](size_type pos) const
     {
-        if constexpr (std::is_same_v<value_type, typename node_type::value_type>) {
-            return container_[pos].value;
-        } else {
-            return *(container_[pos].value);
-        }
+        // NOTE: Отображаем на вызом неконтсантного метода, дабы избежать дублироавния кода.
+        return const_cast<decltype(this)>(this)->operator[](pos);
     }
 
+    // NOTE: Пробрасываем нужные нам методы к низлежащему контейнеру.
     bool empty() const { return container_.empty(); }
     size_type size() const { return container_.size(); }
 
@@ -116,9 +132,9 @@ int main()
     list.push_back(34);
     list.push_back(30);
 
-    std::cout << std::boolalpha << list.empty() << " " << list.size() << " " << list[0] << list[5] << "\n";
+    std::cout << std::boolalpha << list.empty() << " " << list.size() << " " << list[0] << " " << list[5] << "\n";
 
-    List<std::string, std::deque> strings = {"One", "Two"};
+    List<std::string, std::deque> strings = { "One", "Two" };
     strings.push_back("Three");
     strings.push_back("Four");
     strings[0] = "New text";

@@ -9,6 +9,8 @@
 
 #include "TimeTracker.h"
 
+// NOTE: Высчиляем наибольше значение хэша записи в логе для демнострации MapReduce.
+
 int main()
 {
     std::vector<std::string> log;

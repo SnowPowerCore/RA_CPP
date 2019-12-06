@@ -43,10 +43,13 @@ int main()
 
     print(persons);
 
+    // NOTE: Сортируем список граждан по фамилии.
     std::sort(persons.begin(), persons.end(), [](const Person &lhs, const Person &rhs) {
         return lhs.lastName < rhs.lastName;
     });
 
+    // NOTE: Тепеь по возрастам фамилии.
+    // Обратите внимание, что алгоритм std::stable_sort сохраняет порядок элементов от предыдущей сортировки.
     std::stable_sort(persons.begin(), persons.end(), [](const Person &lhs, const Person &rhs) {
         return lhs.age < rhs.age;
     });
@@ -55,20 +58,26 @@ int main()
 
     std::set<std::string> families;
 
-    std::transform(persons.cbegin(), persons.cend(), std::inserter(families, families.end()),
-    [](const Person &person) {
-        return person.lastName;
-    });
+    // NOTE: Преобразуем вектор граждан во множество фамилий.
+    std::transform(persons.cbegin(), persons.cend(),
+        std::inserter(families, families.end()), // NOTE: Используем итератор вставки в множество.
+        [](const Person &person) {
+            return person.lastName;
+        }
+    );
 
+    // NOTE: Используем алгоритм std::copy и итератор вывода в поток для вывода на экран фамилий граждан.
     std::copy(families.cbegin(), families.cend(), std::ostream_iterator<std::string>(std::cout, "\n"));
 
-//    for (auto it = families.cbegin(); it != families.cend(); ++it) {
-//        std::cout << *it << "\n";
-//    }
-//
-//    for (std::string_view family : families) {
-//        std::cout << family << "\n";
-//    }
+    // NOTE: Или мы можем вывести их на экран, использую явную итерацию в цикле for.
+    for (auto it = families.cbegin(); it != families.cend(); ++it) {
+        std::cout << *it << "\n";
+    }
+
+    // NOTE: Или записать то же самое лаконичнее.
+    for (std::string_view family : families) {
+        std::cout << family << "\n";
+    }
 
     return 0;
 }

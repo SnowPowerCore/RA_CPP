@@ -13,6 +13,10 @@ using namespace::std::chrono_literals;
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
+/**
+ * @class SpinLock
+ * @brief Примитив синхронизации потоков в "горячем ожидании".
+ */
 class SpinLock final
 {
 public:
@@ -22,11 +26,15 @@ public:
 
     void lock() noexcept
     {
+        // NOTE: Конкурирующий поток крутится в цикле, пока блокировка не будет освобождена (то самое горячее ожидание).
         while(flag_.test_and_set(std::memory_order_acquire));
     }
 
     void unlock() noexcept
     {
+        // NOTE: По выходу из критической секции поднимаем флаг.
+        // Обратие внимание, что все операции будут всегда внутри критической секции. А те, что снаружи - нет.
+        // Модель памяти для семнатики acquire/release хорошо ложится спинлок.
         flag_.clear(std::memory_order_release);
     }
 
@@ -59,25 +67,31 @@ private:
     std::unordered_map<int, std::string> map_;
 };
 
+// NOTE: Реализуем настоящее потоко-безопасное хранилище.
+// Сравните с примером из 4-го занятия, где мы пренебрегли защитой метода get().
 template<typename Storage, REQUIRES(std::is_base_of_v<IStorage, Storage>)>
 class ThreadSafeStorage : public Storage
 {
 public:
     std::optional<std::string> get(int key) const override
     {
+        // NOTE: Захватываем мьютекс на чтение сколько угодно много раз. (читать можно, писать нельзя)
         std::shared_lock lock(mutex_);
         std::this_thread::sleep_for(1s);
+
         return Storage::get(key);
     }
 
     void set(int key, std::string_view value) override
     {
+        // NOTE: Захватываем мьютекс на чтение только один раз (и никто ни пишет, ни читает).
         std::lock_guard lock(mutex_);
         std::this_thread::sleep_for(300ms);
         Storage::set(key, value);
     }
 
 private:
+    // NOTE: Обратите внимание, используем std::shared_mutex, чтобы ускорить чтение без потери в безопасности.
     mutable std::shared_mutex mutex_;
 };
 

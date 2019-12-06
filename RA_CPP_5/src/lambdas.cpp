@@ -13,15 +13,17 @@ namespace
         std::cout << "function() is called" << "\n";
     }
 
+    // NOTE: Функциональный обеъкт. Ведёт себя и как объект и как функция.
     struct FunctionObject
     {
-        std::vector<std::string> &log;
+        std::vector<std::string> &log; // NOTE: Состояние объекта (обычное поле класса).
 
         explicit FunctionObject(std::vector<std::string> &log)
             : log(log)
         {}
 
-        void operator()() const
+        // NOTE: Оператор вызова (можно использовать как функцию).
+        [[maybe_unused]] void operator()() const
         {
             log.emplace_back("FunctionObject is called");
         }
@@ -30,11 +32,13 @@ namespace
 
 struct Connection
 {
+    // NOTE: Инкапсуляция всего того, что ведёт себя как функция заданной сигнатуры, в один тип.
     using Handler = std::function<void()>;
 
     std::vector<Handler> handlers;
     std::vector<std::string> log;
 
+    // NOTE: Проверяем на наличие оператора вызова и добаляем обработчик события "Connected".
     template<typename Callable, REQUIRES(std::is_invocable_v<Callable>)>
     Connection &onConnected(Callable&& callable)
     {
@@ -46,6 +50,7 @@ struct Connection
     {
         std::cout << "Connected" << "\n";
 
+        // NOTE: Событие "Connected" наступило, вызываем обработчики.
         for (const Handler &handler : handlers) {
             handler();
         }

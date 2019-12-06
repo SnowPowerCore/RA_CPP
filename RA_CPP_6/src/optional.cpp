@@ -4,6 +4,9 @@
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
+// NOTE: Получаем доступ к данным стуктур с большой вложенностью с проверкой на из наличие.
+
+// NOTE: Используем указатели для необязательных полей.
 namespace Pointers
 {
     struct City {
@@ -33,6 +36,7 @@ namespace Pointers
         std::string emails;
     };
 
+    // NOTE: Вот такой код придется написать, если выполнять все проверки.
     void printCity(const User& user)
     {
         if (user.person) {
@@ -55,15 +59,23 @@ namespace Pointers
 
 namespace
 {
+    /**
+     * @brief Функция монадического связывания для std::optional.
+     * @param optional будем рассматривать std::optional как монаду "Maybe"
+     * @param callable связываемая функция
+     * @param args аргументы связываемой функции
+     */
     template<typename T, typename Callable, typename... Ts, REQUIRES(std::is_invocable_v<Callable, T, Ts...>)>
     constexpr auto mbind(const std::optional<T>& optional, Callable&& callable, Ts&&... args)
     {
+        // NOTE: Применяем callable только для существующих значенией.
         return optional.has_value()
             ? std::make_optional(callable(optional.value(), std::forward<Ts>(args)...))
             : std::nullopt;
     }
 }
 
+// NOTE: Используем optional-ы для необязательных полей.
 namespace Optionals
 {
     struct City {
@@ -93,6 +105,8 @@ namespace Optionals
         std::string emails;
     };
 
+    // NOTE: Используем комбинацию функции mbind() и метода value_or() для записи нужного нам выражения.
+    // Сравните с примером на указателях.
     void printCity(const User& user)
     {
         std::cout
@@ -111,14 +125,16 @@ int main()
     {
         using namespace Pointers;
 
-        User user = {
-            new Person { "Bob", "Williams", 27,
-                new Location {
-                    new City { "Canada", "Toronto" },
-                    new Address { "The main st.", 1 },
-                }
-            }, "user@company.com"
+        // NOTE: MSVC отказался собирать код со вложенной инициализацией person, сославшись на внутреннюю ошибку.
+        // Ещё один аргумент в пользу решения на optional-ах.
+        auto* person = new Person { "Bob", "Williams", 27,
+            new Location {
+                new City { "Canada", "Toronto" },
+                new Address { "The main st.", 1 },
+            }
         };
+
+        User user = { person, "user@company.com" };
 
         printCity(user);
     }

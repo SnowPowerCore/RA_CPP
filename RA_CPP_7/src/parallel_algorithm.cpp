@@ -6,6 +6,8 @@
 
 #include "TimeTracker.h"
 
+// NOTE: Оцениваем производительность параллельного исполнения алгоритма сортировки.
+
 int main()
 {
     std::vector<long double> vector(100'000'000);
@@ -27,7 +29,7 @@ int main()
         std::sort(std::execution::par, vector.begin(), vector.end());
     }
 
-// NOTE: This policy is from C++20, but GCC already support it.
+// NOTE: Эта политика из C++20, но GCC уже поддерживает её.
 #ifdef __GNUC__
     {
         std::generate(vector.begin(), vector.end(), generator);

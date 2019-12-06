@@ -29,6 +29,8 @@ private:
     std::unordered_map<int, std::string> map_;
 };
 
+// NOTE: Реализуем потоко-безопасное хранилище путём наследования от шаблонного параметра.
+// Сравните с примером из 2-го занятия.
 template<typename Storage, REQUIRES(std::is_base_of_v<IStorage, Storage>)>
 class ThreadSafeStorage : public Storage
 {

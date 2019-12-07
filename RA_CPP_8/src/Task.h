@@ -34,8 +34,9 @@ public:
         // NOTE: Что делать при завершении сопрограммы.
         auto final_suspend()
         {
-            // NOTE: Не останавливать выполнение.
-            return std::experimental::suspend_never();
+            // NOTE: Приостанавливаем сопрограмму при завершении.
+            // WARNING: Необходимо в этом случае самостоятельно освобождать её ресурсы.
+            return std::experimental::suspend_always();
         }
 
         // NOTE: Как обрабатывать выражение co_return ...
@@ -58,6 +59,14 @@ public:
 
     Task(const Task& other) = delete;
     Task(Task&& other) noexcept = default;
+
+    ~Task()
+    {
+        // NOTE: Освобождаем ресурсы сопрограммы.
+        if (handle_) {
+            handle_.destroy();
+        }
+    }
 
     /**
      * @brief Возобновляет выполнение сопрограммы.
@@ -127,7 +136,7 @@ public:
 
         auto final_suspend()
         {
-            return std::experimental::suspend_never();
+            return std::experimental::suspend_always();
         }
 
         // NOTE: Обрабатываем выход из сопрограммы без возвращаемого значения.
@@ -146,6 +155,13 @@ public:
 
     Task(const Task& other) = delete;
     Task(Task&& other) noexcept = default;
+
+    ~Task()
+    {
+        if (handle_) {
+            handle_.destroy();
+        }
+    }
 
     bool resume()
     {

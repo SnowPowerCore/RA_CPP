@@ -34,8 +34,6 @@ public:
 
         auto final_suspend()
         {
-            // NOTE: Приостанавливаем сопрограмму при завершении.
-            // WARNING: Необходимо в этом случае самостоятельно освобождать её ресурсы.
             return std::experimental::suspend_always();
         }
 
@@ -115,7 +113,6 @@ public:
 
     ~Generator()
     {
-        // NOTE: Освобождаем ресурсы сопрограммы.
         if (handle_) {
             handle_.destroy();
         }

@@ -53,7 +53,7 @@ public:
 
     /**
      * @brief Запускает сервер.
-     * @warning Корректный выход из функции возможем лишь при выбросе исключения.
+     * @warning Корректный выход из функции возможен лишь при выбросе исключения.
      */
     [[noreturn]] void start()
     {
@@ -62,7 +62,7 @@ public:
         ip::tcp::iostream stream;
         ip::tcp::acceptor acceptor(service_, endpoint_);
 
-        // NOTE: Принимаем входящее соедение и свзываем его с потоком.
+        // NOTE: Принимаем входящее соединение и связываем его с потоком.
         acceptor.accept(*stream.rdbuf());
 
         while (true) {

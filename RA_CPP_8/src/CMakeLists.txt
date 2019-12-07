@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 3.12)
 
 project(RA_CPP_8)
 
+# NOTE: Добавляем опцию, позволяющую собрать проект без conan.
 option(USE_CONAN "Use conan" ON)
+
+# NOTE: Добавляем опцию, позволяющую собрать проект без примера с сопрограммами.
 option(WITH_COROUTINES "Enable the coroutines example" ON)
 
 find_package(Threads)
@@ -21,6 +24,7 @@ target_link_libraries(Storage PRIVATE Threads::Threads)
 add_executable(Futures futures.cpp)
 target_compile_features(Futures PRIVATE cxx_std_17)
 
+# NOTE: Включаем boost::future с методом then()
 target_compile_definitions(Futures
     PRIVATE
         BOOST_THREAD_PROVIDES_FUTURE
@@ -50,6 +54,7 @@ if (WITH_COROUTINES)
 
     target_compile_features(Coroutines PRIVATE cxx_std_20)
 
+    # NOTE: Включаем концепты для Clang и MSVC.
     if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
         target_compile_options(Coroutines PRIVATE -fcoroutines-ts -stdlib=libc++)
         target_link_libraries(Coroutines PRIVATE c++)

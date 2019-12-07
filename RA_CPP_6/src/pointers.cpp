@@ -57,7 +57,7 @@ public:
 
     std::shared_ptr<Tree> removeChild(size_t index)
     {
-        // NOTE: Удаляем поддерево по указанному индеску, если таковое имеется.
+        // NOTE: Удаляем поддерево по указанному индексу, если таковое имеется.
         // Обратите внимание, поддерево останется в памяти если им кто-то завладеет.
         std::shared_ptr<Tree> tree;
 
@@ -119,7 +119,7 @@ private:
 
 private:
     T value_;
-    std::weak_ptr<Tree> parent_; // NOTE: Слабая сслыка на родителя решает проблему перекрёстных ссылок.
+    std::weak_ptr<Tree> parent_; // NOTE: Слабая ссылка на родителя решает проблему перекрёстных ссылок.
     std::vector<std::shared_ptr<Tree>> children_;
 };
 

@@ -8,7 +8,7 @@ namespace TypeTraits
 {
     /**
      * @struct IsPredicate
-     * @brief Свойство типа, показывающее, является ли тип предитаком (Callable, возращающим bool).
+     * @brief Свойство типа, показывающее, является ли тип предитаком (Callable, возвращающим bool).
      */
     template<typename Callable, typename... Args>
     struct IsPredicate : std::bool_constant<std::is_invocable_r_v<bool, Callable, Args...>> {};
@@ -17,12 +17,12 @@ namespace TypeTraits
 namespace algorithm
 {
     /**
-     * @brief Алгоритм преборазования с фильтрацией.
-     * @param first итератор на начало исходной послеовательности
-     * @param last итератор на конец исходной послеовательности
+     * @brief Алгоритм преобразования с фильтрацией.
+     * @param first итератор на начало исходной последовательности
+     * @param last итератор на конец исходной последовательности
      * @param output итератор на начало целевой последовательности
      * @param pred предикат условия фильтрации
-     * @param transform функция преобразования элемена последовательности
+     * @param transform функция преобразования элемента последовательности
      * @return итератор на элемент целевой последовательности, следующий за последним изменённым
      */
     template<typename InputIterator, typename OutputIterator, typename Predicate, typename Transform>

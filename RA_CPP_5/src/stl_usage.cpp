@@ -48,7 +48,7 @@ int main()
         return lhs.lastName < rhs.lastName;
     });
 
-    // NOTE: Тепеь по возрастам фамилии.
+    // NOTE: Теперь по возрастам фамилии.
     // Обратите внимание, что алгоритм std::stable_sort сохраняет порядок элементов от предыдущей сортировки.
     std::stable_sort(persons.begin(), persons.end(), [](const Person &lhs, const Person &rhs) {
         return lhs.age < rhs.age;

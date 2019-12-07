@@ -2,6 +2,11 @@
 
 #include <experimental/coroutine>
 
+/**
+ * @class Task
+ * @brief Определяет поведение сопрограммы, выполняющую некоторые вычисления и возвращающую результат.
+ * @tparam T тип возвращаемого значения
+ */
 template<typename T>
 class Task final
 {
@@ -9,25 +14,37 @@ public:
     struct promise_type;
     using coroutine_handle = std::experimental::coroutine_handle<promise_type>;
 
-    struct promise_type final {
-        T value;
+    struct promise_type final
+    {
+        T value; // NOTE: Храним значение, возвращаемое из сопрограммы.
 
-        Task get_return_object() {
+        // NOTE: Получаем экземпляр Task для возврата из сопрограммы.
+        Task get_return_object()
+        {
             return coroutine_handle::from_promise(*this);
         }
 
-        auto initial_suspend() {
+        // NOTE: Что делать при первом заходе в сопрограмму.
+        auto initial_suspend()
+        {
+            // NOTE: Не останавливать выполнение.
             return std::experimental::suspend_never();
         }
 
-        auto final_suspend() {
-            return std::experimental::suspend_always();
+        // NOTE: Что делать при завершении сопрограммы.
+        auto final_suspend()
+        {
+            // NOTE: Не останавливать выполнение.
+            return std::experimental::suspend_never();
         }
 
-        void return_value(T&& other) {
+        // NOTE: Как обрабатывать выражение co_return ...
+        void return_value(T&& other)
+        {
             value = std::forward<T>(other);
         }
 
+        // NOTE: Если есть необработанные исключения, аварийно завершаем программу.
         [[noreturn]] void unhandled_exception()
         {
             std::terminate();
@@ -42,15 +59,13 @@ public:
     Task(const Task& other) = delete;
     Task(Task&& other) noexcept = default;
 
-    ~Task()
-    {
-        if (handle_) {
-            handle_.destroy();
-        }
-    }
-
+    /**
+     * @brief Возобновляет выполнение сопрограммы.
+     * @return значение, показывающее может ли сопрограмма быть возобновлена (ещё не завершена)
+     */
     bool resume()
     {
+        // NOTE: Если не ещё завершена, то возобновляем.
         if (!handle_.done()) {
             handle_.resume();
         }
@@ -58,15 +73,28 @@ public:
         return !handle_.done();
     }
 
-    bool await_ready() const {
+    /**
+     * @brief Показывает, надо ли останавливать сопрограмму.
+     */
+    bool await_ready() const
+    {
         return handle_.done();
     }
 
-    void await_suspend(std::experimental::coroutine_handle<>) {
-        return handle_.resume();
+    /**
+     * @brief Вызывается после остановки сопрограммы.
+     */
+    void await_suspend(std::experimental::coroutine_handle<>)
+    {
+        // NOTE: Ничего не делаем.
     }
 
-    auto await_resume() {
+    /**
+     * @brief Вызывается при возобновлении сопрограммы.
+     */
+    auto await_resume()
+    {
+        // NOTE: Просто возвращаем значение.
         return handle_.promise().value;
     }
 
@@ -74,6 +102,10 @@ private:
     coroutine_handle handle_;
 };
 
+/**
+ * @class Task<void>
+ * @brief Специализация задачи для типа void. Выполнение некоторого кода без возврата какого-либо значения.
+ */
 template<>
 class Task<void> final
 {
@@ -81,19 +113,24 @@ public:
     struct promise_type;
     using coroutine_handle = std::experimental::coroutine_handle<promise_type>;
 
-    struct promise_type final {
-        Task get_return_object() {
+    struct promise_type final
+    {
+        Task get_return_object()
+        {
             return coroutine_handle::from_promise(*this);
         }
 
-        auto initial_suspend() {
+        auto initial_suspend()
+        {
             return std::experimental::suspend_never();
         }
 
-        auto final_suspend() {
-            return std::experimental::suspend_always();
+        auto final_suspend()
+        {
+            return std::experimental::suspend_never();
         }
 
+        // NOTE: Обрабатываем выход из сопрограммы без возвращаемого значения.
         void return_void() {}
 
         [[noreturn]] void unhandled_exception()
@@ -109,13 +146,6 @@ public:
 
     Task(const Task& other) = delete;
     Task(Task&& other) noexcept = default;
-
-    ~Task()
-    {
-        if (handle_) {
-            handle_.destroy();
-        }
-    }
 
     bool resume()
     {

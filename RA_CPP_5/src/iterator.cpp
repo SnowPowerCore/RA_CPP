@@ -32,7 +32,7 @@ struct ReadLineIterator
         return line;
     }
 
-    // WARNING: Считаем, для наглядности, что все строки в потоке уникальны. Не используйте итереатор в реально коде!
+    // WARNING: Считаем, для наглядности, что все строки в потоке уникальны. Не используйте итератор в реально коде!
     bool operator!=(const ReadLineIterator& other) const
     {
         return (stream != other.stream) || (line != other.line);
@@ -54,7 +54,7 @@ namespace std
 /**
  * @class ReadLines
  * @brief Последовательность строк в потоке вывода.
- * @note Класс нужен лишь для лакончиной записи цикла for.
+ * @note Класс нужен лишь для лаконичной записи цикла for.
  */
 class ReadLines
 {

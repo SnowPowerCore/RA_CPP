@@ -50,7 +50,7 @@ struct CaseInsensitiveTraits final : std::char_traits<char>
 template<typename T, typename Allocator = std::allocator<T>>
 struct DebugAllocator
 {
-    // NOTE: Пробрасываем основные свойста базового аллокатора в обёртку.
+    // NOTE: Пробрасываем основные свойства базового аллокатора в обёртку.
     using value_type = typename std::allocator_traits<Allocator>::value_type;
     using pointer = typename std::allocator_traits<Allocator>::pointer;
     using const_pointer = typename std::allocator_traits<Allocator>::const_pointer;
@@ -77,7 +77,7 @@ struct DebugAllocator
     }
 };
 
-// NOTE: Предполагаем, что алокаторы для разных типов эквивалентны.
+// NOTE: Предполагаем, что аллокаторы для разных типов эквивалентны.
 template<typename U, typename V>
 constexpr bool operator== (const DebugAllocator<U>&, const DebugAllocator<V>&) noexcept
 {

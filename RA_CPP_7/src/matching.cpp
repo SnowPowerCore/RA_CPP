@@ -10,6 +10,8 @@
 
 #include "TimeTracker.h"
 
+// NOTE: Сопоставление изображений по ключевым точкам с помощью OpenCV.
+
 int main()
 {
     const std::vector files = { "base.jpg", "locate.jpg" };
@@ -23,6 +25,7 @@ int main()
     {
         TimeTracker tt("Matching");
 
+        // NOTE: Используем OpenMP для распараллеливания цикла.
         #pragma omp parallel for
         for (int i = 0; i < images.size(); ++i) {
             images[i] = cv::imread(files[i], cv::IMREAD_ANYCOLOR);

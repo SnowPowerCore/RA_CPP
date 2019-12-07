@@ -18,7 +18,7 @@ int main()
     // copying
     ByteArray copied(byteArray);
 
-    // copy elison
+    // copy elision
     ByteArray captured(readFile());
 
     // moving

@@ -28,7 +28,7 @@ int main()
     assert(a == -1 && rvref__ == -1);
 
     a = 42;
-    int* p = &a; // взятие адреса переменной в памаяти (формирование указателя)
+    int* p = &a; // взятие адреса переменной в памяти (формирование указателя)
     std::cout << p << " " << *p << "\n";
 
     *p = -1; // разыменовывание указателя
@@ -40,7 +40,7 @@ int main()
     p = nullptr; // указатель в никуда
     std::cout << p << "\n";
 
-    // провека типов (вывод информации о типе переменной в stdout)
+    // проверка типов (вывод информации о типе переменной в stdout)
     std::cout << typeid(rvref_).name() << "\n";
     std::cout << boost::typeindex::type_id<decltype(rvref__)>().pretty_name() << "\n";
     std::cout << boost::typeindex::type_id_with_cvr<decltype(rvref__)>().pretty_name() << "\n";

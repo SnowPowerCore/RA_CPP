@@ -78,11 +78,11 @@ class List
     // NOTE: Определяем ячейку для хранения объектов с учётом их размера.
     using node_type = Node<T, (sizeof(T) > sizeof(T*))>;
 
-    // NOTE: В нижлежащем контейнере храним именно ячейки.
+    // NOTE: В низлежащем контейнере храним именно ячейки.
     using container_type = Container<node_type, std::allocator<node_type>>;
 
 public:
-    // NOTE: Определяем свойтва контейнера для совместимости с STL.
+    // NOTE: Определяем свойства контейнера для совместимости с STL.
     using value_type = T;
     using size_type = typename container_type::size_type;
     using reference = T&;
@@ -93,7 +93,7 @@ public:
 
     List(std::initializer_list<T> ilist)
     {
-        // NOTE: Инициализация списком. Перемещаем элементы в низжлежащий контейнер.
+        // NOTE: Инициализация списком. Перемещаем элементы в низлежащий контейнер.
         container_.resize(ilist.size());
         std::move(ilist.begin(), ilist.end(), container_.begin());
     }
@@ -110,7 +110,7 @@ public:
 
     const_reference operator[](size_type pos) const
     {
-        // NOTE: Отображаем на вызом неконтсантного метода, дабы избежать дублироавния кода.
+        // NOTE: Отображаем на вызов неконстантного метода, дабы избежать дублирования кода.
         return const_cast<decltype(this)>(this)->operator[](pos);
     }
 

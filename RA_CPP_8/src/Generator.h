@@ -6,6 +6,11 @@
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
+/**
+ * @class Generator
+ * @brief Определяет поведение сопрограммы, генерирующую последовательность чисел.
+ * @tparam T тип возвращаемого значения
+ */
 template<typename T = int, REQUIRES(std::is_arithmetic_v<T>)>
 class Generator final
 {
@@ -13,24 +18,32 @@ public:
     struct promise_type;
     using coroutine_handle = std::experimental::coroutine_handle<promise_type>;
 
-    struct promise_type final {
+    struct promise_type final
+    {
         T value;
 
-        Generator get_return_object() {
+        Generator get_return_object()
+        {
             return coroutine_handle::from_promise(*this);
         }
 
-        auto initial_suspend() {
+        auto initial_suspend()
+        {
             return std::experimental::suspend_never();
         }
 
-        auto final_suspend() {
+        auto final_suspend()
+        {
+            // NOTE: Приостанавливаем сопрограмму при завершении.
+            // WARNING: Необходимо в этом случае самостоятельно освобождать её ресурсы.
             return std::experimental::suspend_always();
         }
 
         void return_void() {}
 
-        auto yield_value(T other) {
+        // NOTE: Как обрабатывать выражение co_yield ...
+        auto yield_value(T other)
+        {
             value = other;
             return std::experimental::suspend_always();
         }
@@ -41,6 +54,10 @@ public:
         }
     };
 
+    /**
+     * @struct Iterator
+     * @brief Позволяет использовать генератор в цикле for.
+     */
     struct Iterator final
     {
         using iterator_category = std::input_iterator_tag;
@@ -52,7 +69,9 @@ public:
             : handle(handle)
         {}
 
-        Iterator& operator++() {
+        Iterator& operator++()
+        {
+            // NOTE: Возобновляем сопрограмму в каждой новой итерации.
             handle.resume();
 
             if (handle.done()) {
@@ -62,15 +81,18 @@ public:
             return *this;
         }
 
-        bool operator==(const Iterator& other) const {
+        bool operator==(const Iterator& other) const
+        {
             return handle == other.handle;
         }
 
-        bool operator!=(const Iterator& other) const {
+        bool operator!=(const Iterator& other) const
+        {
             return !(*this == other);
         }
 
-        const T& operator*() const {
+        const T& operator*() const
+        {
             return handle.promise().value;
         }
     };
@@ -93,6 +115,7 @@ public:
 
     ~Generator()
     {
+        // NOTE: Освобождаем ресурсы сопрограммы.
         if (handle_) {
             handle_.destroy();
         }

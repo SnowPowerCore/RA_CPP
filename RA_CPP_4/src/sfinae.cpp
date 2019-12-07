@@ -15,7 +15,7 @@ namespace TypeTraits
 {
     /**
      * @struct IsLookupContainer
-     * @brief Свойство типа, показывающее, является ли тип контейнером поиска (содежит метод "find()").
+     * @brief Свойство типа, показывающее, является ли тип контейнером поиска (содержит метод "find()").
      */
     template<typename T, typename = void>
     struct IsLookupContainer : std::false_type {};

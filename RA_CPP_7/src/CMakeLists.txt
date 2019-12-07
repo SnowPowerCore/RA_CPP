@@ -5,6 +5,7 @@ project(RA_CPP_7)
 find_package(OpenMP REQUIRED)
 find_package(Threads REQUIRED)
 
+# NOTE: Добавляем опцию, позволяющую собрать проект без conan.
 option(USE_CONAN "Use conan" ON)
 
 if (USE_CONAN)
@@ -21,6 +22,7 @@ target_link_libraries(Deadlock PRIVATE Threads::Threads)
 add_executable(MapReduce map_reduce.cpp)
 target_compile_features(MapReduce PRIVATE cxx_std_17)
 
+# NOTE: При сборке GCC и Clang компонуем цель с tbb (Intel Threading Building Blocks).
 if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
     target_link_libraries(MapReduce PRIVATE tbb)
 endif()

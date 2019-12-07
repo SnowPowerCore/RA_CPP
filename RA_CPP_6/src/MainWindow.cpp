@@ -7,3 +7,5 @@ MainWindow::MainWindow(QWidget* parent)
 {
     ui_->setupUi(this);
 }
+
+MainWindow::~MainWindow() = default;

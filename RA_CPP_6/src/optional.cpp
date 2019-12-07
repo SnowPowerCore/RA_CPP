@@ -4,7 +4,7 @@
 
 #define REQUIRES(...) typename = std::enable_if_t<__VA_ARGS__>
 
-// NOTE: Получаем доступ к данным стуктур с большой вложенностью с проверкой на из наличие.
+// NOTE: Получаем доступ к данным структур с большой вложенностью с проверкой на из наличие.
 
 // NOTE: Используем указатели для необязательных полей.
 namespace Pointers
@@ -68,7 +68,7 @@ namespace
     template<typename T, typename Callable, typename... Ts, REQUIRES(std::is_invocable_v<Callable, T, Ts...>)>
     constexpr auto mbind(const std::optional<T>& optional, Callable&& callable, Ts&&... args)
     {
-        // NOTE: Применяем callable только для существующих значенией.
+        // NOTE: Применяем callable только для существующих значений.
         return optional.has_value()
             ? std::make_optional(callable(optional.value(), std::forward<Ts>(args)...))
             : std::nullopt;

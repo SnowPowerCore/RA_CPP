@@ -3,6 +3,10 @@
 
 using namespace std::chrono;
 
+/**
+ * @class TimeTracker
+ * @brief RAII-класс замера времени жизни области видимости.
+ */
 class TimeTracker final
 {
 public:

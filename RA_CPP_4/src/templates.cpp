@@ -46,7 +46,7 @@ struct Default : T
         // NOTE: Проверяем наличие такого конструктора у класса T.
         static_assert(std::is_constructible_v<T, Ts...>);
 
-        // NOTE: Проверяем, что объект каждого из параметров Ts... может быть сконструирован по умлочанию..
+        // NOTE: Проверяем, что объект каждого из параметров Ts... может быть сконструирован по умолчанию..
         static_assert((std::is_default_constructible_v<Ts> && ...), "Some of args are not default constructible");
     }
 };

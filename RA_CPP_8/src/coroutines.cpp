@@ -21,10 +21,11 @@ namespace
         co_return "Hello! The answer is ";
     }
 
-    Task<void> run()
+    Task<void> coroutine()
     {
         std::cout << "The coroutine is started" << "\n";
 
+        // NOTE: В текущей сопрограмме ждём результатов других.
         const std::string text = co_await getTheText();
         const int answer = co_await findTheAnswer();
 
@@ -35,6 +36,7 @@ namespace
     template<typename T>
     Generator<T> range(T first, T last, T step = 1)
     {
+        // NOTE: Генерируем последовательность чисел указанного диапазона с указанным шагом.
         for (T i = first; i < last; i += step) {
             co_yield i;
         }
@@ -43,9 +45,10 @@ namespace
 
 int main()
 {
-    auto task = run();
-    task.resume();
+    // NOTE: Запускаем сопрограмму.
+    coroutine().resume();
 
+    // NOTE: Применяем генератор для лаконичной записи последовательности в цикле.
     for (int i : range(10, 26, 3)) {
         std::cout << i << "\n";
     }

@@ -13,7 +13,7 @@ namespace
         std::cout << "function() is called" << "\n";
     }
 
-    // NOTE: Функциональный обеъкт. Ведёт себя и как объект и как функция.
+    // NOTE: Функциональный объект. Ведёт себя и как объект и как функция.
     struct FunctionObject
     {
         std::vector<std::string> &log; // NOTE: Состояние объекта (обычное поле класса).
@@ -38,7 +38,7 @@ struct Connection
     std::vector<Handler> handlers;
     std::vector<std::string> log;
 
-    // NOTE: Проверяем на наличие оператора вызова и добаляем обработчик события "Connected".
+    // NOTE: Проверяем на наличие оператора вызова и добавляем обработчик события "Connected".
     template<typename Callable, REQUIRES(std::is_invocable_v<Callable>)>
     Connection &onConnected(Callable&& callable)
     {

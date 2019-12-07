@@ -58,7 +58,7 @@ namespace algorithm
     /**
      * @brief Применяет указанную функцию преобразования к элементам контейнера
      * @param container исходный контейнер
-     * @param transform функция преобразования элемена контейнера
+     * @param transform функция преобразования элемента контейнера
      * @return новый контейнер, содержащий преобразованные элементы исходного
      */
     ResultType transform(const Containter& container, Transform&& transform)

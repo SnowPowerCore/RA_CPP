@@ -31,11 +31,11 @@ struct Dog final : Animal<Dog>
 
 namespace
 {
-    // NOTE: Определяем множество полиморфтных типов (Animals).
+    // NOTE: Определяем множество полиморфных типов (Animals).
     template<typename T>
     constexpr bool IsAnimal = std::is_base_of_v<Animal<T>, T>;
 
-    // NOTE: Обрабатываем "коллекцию" полиморфных объектов как пакет параметров шалбонной функции.
+    // NOTE: Обрабатываем "коллекцию" полиморфных объектов как пакет параметров шаблонной функции.
     template<typename... Ts, REQUIRES((IsAnimal<Ts> && ...))>
     void voiceAll(Ts&& ... animal)
     {

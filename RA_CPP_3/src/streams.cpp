@@ -26,7 +26,7 @@ namespace
 
 /**
  * @struct Nothing
- * @brief Преобразование по умолчнию (ничего не делает).
+ * @brief Преобразование по умолчанию (ничего не делает).
  */
 struct Nothing final
 {
@@ -93,7 +93,7 @@ int main()
     boost::asio::ip::tcp::iostream socket_stream;
     socket_stream.connect("127.0.0.1", "3333");
 
-    // NOTE: Cетевой обмен с преобразованием в UPPER_CASE.
+    // NOTE: Сетевой обмен с преобразованием в UPPER_CASE.
     transform(socket_stream, socket_stream, [](std::string line) {
         std::transform(line.begin(), line.end(), line.begin(), ::toupper);
         return line;

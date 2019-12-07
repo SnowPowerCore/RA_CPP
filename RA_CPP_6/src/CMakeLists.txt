@@ -6,7 +6,7 @@ project(RA_CPP_6)
 option(WITH_QT_EXAMPLE "Enable the example of Qt application" ON)
 
 if (WITH_QT_EXAMPLE)
-    # NOTE: Включаем Qt-спечифичную автогенерацию кода. Подробности в документации Qt.
+    # NOTE: Включаем Qt-специфичную автогенерацию кода. Подробности в документации Qt.
     set(CMAKE_AUTOMOC ON)
     set(CMAKE_AUTOUIC ON)
 

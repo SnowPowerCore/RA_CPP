@@ -99,7 +99,7 @@ private:
 };
 
 // NOTE: Реализуем потоко-безопасное хранилище посредством приватного и виртуального наследования.
-// WARNING: Только для демострации. В реальном коде так делать нельзя.
+// WARNING: Только для демонстрации. В реальном коде так делать нельзя.
 class ThreadSafeStorage : virtual public IStorage, private MemoryStorage
 {
 public:

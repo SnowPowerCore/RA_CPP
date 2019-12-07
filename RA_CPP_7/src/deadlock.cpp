@@ -9,7 +9,7 @@ using namespace std::chrono_literals;
 
 /**
  * @class DebugMutex
- * @brief Отладочная обёртка над мьютеском. Выводит в stdout информации о блокировках.
+ * @brief Отладочная обёртка над мьютексом. Выводит в stdout информации о блокировках.
  */
 template<typename Mutex>
 class DebugMutex final : private Mutex

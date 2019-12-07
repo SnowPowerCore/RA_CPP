@@ -50,7 +50,7 @@ struct Writer
 
 namespace
 {
-    // NOTE: Синхронная последовтельная запись.
+    // NOTE: Синхронная последовательная запись.
     // Надёжно, но долго. Вынуждены простаивать из-за ввода/вывода.
     void synchronous()
     {
@@ -64,8 +64,8 @@ namespace
         std::cout << "Other task" << "\n";
     }
 
-    // NOTE: Асихронная запись.
-    // Ненадёжно. Данные пишутся в произвольном поряке.
+    // NOTE: Асинхронная запись.
+    // Ненадёжно. Данные пишутся в произвольном порядке.
     void asynchronous()
     {
         Writer writer(std::cout);
@@ -79,7 +79,7 @@ namespace
         std::this_thread::sleep_for(10s);
     }
 
-    // NOTE: Асихронная запись с callback-ами.
+    // NOTE: Асинхронная запись с callback-ами.
     // Надёжно и быстро, но не ясно когда запись завершится.
     void callbacks()
     {
@@ -99,6 +99,8 @@ namespace
         std::this_thread::sleep_for(10s);
     }
 
+    // NOTE: boost::future. Применяем метод "then()" для связывания цепочки callback-ов из предыдущего примера.
+    // Надёжно и быстро, завершения по выходу из метода "get()". Можно навешать любые преобразования.
     void futures()
     {
         Writer writer(std::cout);
